@@ -1,5 +1,6 @@
 import type { Handle } from '@sveltejs/kit';
-import { SECRET_KEY } from '$env/static/private';
+// import { SECRET_KEY } from '$env/static/private';
+const SECRET_KEY = "1234";
 
 export const handle = (async ({ event, resolve }) => {
 
@@ -11,7 +12,7 @@ export const handle = (async ({ event, resolve }) => {
         event.locals.user = "ok";
         event.locals.cookies = event.cookies.getAll();
     }
-    
+
     const response = await resolve(event);
     //response.headers.set('x-custom-header', 'potato');
 
