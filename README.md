@@ -5,9 +5,9 @@ A Cloudflare Pages-project based on Sveltekit and `@sveltejs/adapter-cloudflare`
 Authentication is implemented as a cookie that is either
 
 1. Parsed by a middleware
-2. Parsed by layout.server.ts
+2. Parsed by `layout.server.ts`
 
-and compared to the 'true' value. If successful, a user object
+and compared to the secret value. If successful, a user object
 is returned to the page, and authenticated content can be viewed.
 
 ## The problem
@@ -24,7 +24,7 @@ The goal is to enable a simple cookie-based authentication scheme where
 1. A cookie is set on the server after a successful form POST (Sveltekit action) - this works, the cookie is set and forwarded.
 2. The cookie is parsed either by a middleware (in hooks.server.ts) or the +layout.server.ts file, and if it is valid, 
     1. `hooks.server.ts`: set a `event.locals.someFlagHere` 
-    2. **`+layout.server.ts**`: return a `LayoutData` response (e.g. {user: "ok"})
+    2. **`+layout.server.ts`**: return a `LayoutData` response (e.g. {user: "ok"})
 3. The flag is parsed by the page, and if the user is authenticated, we serve the protected content.
 
 Only step 1 works when the site is deployed to Cloudflare Pages. Step 2 and 3 are partially omitted. With a layout-based flow, the user is signed in once, and then an old cache is served, even though the cookie is present. With a middleware-based flow, the original cached response is always served.
