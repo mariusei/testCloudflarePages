@@ -9,7 +9,8 @@
 
     // If we want to set a server cookie:
     // we send a form action to page.server.ts
-    export let form: ActionData;
+    // if we want to use the response, we can do so here:
+    // export let form: ActionData;
 
     // usually, the user would submit a password
     // that is hashed and compared to the true value on the server side
