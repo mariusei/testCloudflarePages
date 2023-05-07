@@ -21,13 +21,24 @@
 <h1>Welcome to SvelteKit</h1>
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 
-<form method="POST">
-    <input type="hidden" name="loginKey" value="{superSecretKey}">
-    <button type="submit">Log in</button>
-</form>
-
 {#if $user}
     <p>Logged in as {$user}</p>
 {:else}
     <p>Not logged in</p>
+    <form method="POST">
+        <input type="hidden" name="loginKey" value="{superSecretKey}">
+        <button type="submit">Log in</button>
+    </form>
 {/if}
+
+<h2>Debug</h2>
+<p>Try and reload the page after logging in. Use the browser developer
+    tools and inspect the Storage -> Cookies and see that a valid cookie
+    still is set, even after reloading the page.
+</p>
+<p>This cookie
+    should be parsed, and the user should be logged in automatically.
+</p>
+<p>However, a cached version of the page is shown. See the cached
+    response date as the timestamp above.
+</p>
