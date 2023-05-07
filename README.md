@@ -1,38 +1,45 @@
-# create-svelte
+# Sveltekit on Cloudflare pages
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+A Cloudflare Pages-project based on Sveltekit and `@sveltejs/adapter-cloudflare`.
 
-## Creating a project
+Authentication is implemented as a cookie that is either
 
-If you're seeing this, you've probably already done this step. Congrats!
+1. Parsed by a middleware
+2. Parsed by layout.server.ts
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+and compared to the 'true' value. If successful, a user object
+is returned to the page, and authenticated content can be viewed.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+## The problem
 
-## Developing
+Cloudflare Pages caches the responses, so that only a cached 
+middleware response is served. If the request was made with a
+secret and subsequentially, an authenticated view was made, 
+this response is cached and shown to *all* visitors.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Method
 
-```bash
-npm run dev
+The goal is to enable a simple cookie-based authentication scheme where
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+1. A cookie is set on the server after a successful form POST (Sveltekit action) - this works, the cookie is set and forwarded.
+2. The cookie is parsed either by a middleware (in hooks.server.ts) or the +layout.server.ts file, and if it is valid, 
+    a. `hooks.server.ts`: set a `event.locals.someFlagHere` 
+    b. **`+layout.server.ts**`: return a `LayoutData` response (e.g. {user: "ok"})
+3. The flag is parsed by the page, and if the user is authenticated, we serve the protected content.
 
-## Building
+Only step 1 works when the site is deployed to Cloudflare Pages. Step 2 and 3 are partially omitted. With a layout-based flow, the user is signed in once, and then an old cache is served, even though the cookie is present. With a middleware-based flow, the original cached response is always served.
 
-To create a production version of your app:
+## Discussion
 
-```bash
-npm run build
-```
+I understand that any server side-functions are bundled to .svelte-kit/cloudflare/**_workers.js**. 
 
-You can preview the production build with `npm run preview`.
+- With the hooks-method, I can find the function corresponding to the middleware I am introducing.
+- With the Layout-method, I can see that the cookie is set and a new authenticated version of the page is loaded, before an older cached version is returned.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## To run
+
+This script runs as expected locally. It fails only when submitted as a Cloudflare Pages site.
+
+For a live version - see
+
+https://testcloudflarepages-7vd.pages.dev/
