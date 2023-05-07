@@ -11,9 +11,7 @@ export const handle = (async ({ event, resolve }) => {
         event.locals.user = "ok";
         event.locals.cookies = event.cookies.getAll();
     }
-
-    //event.locals.user = event.cookies.get('sessionid');
-
+    
     const response = await resolve(event);
     //response.headers.set('x-custom-header', 'potato');
 
