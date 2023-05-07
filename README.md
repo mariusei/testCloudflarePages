@@ -1,4 +1,4 @@
-# Sveltekit on Cloudflare pages
+# Sveltekit on Cloudflare Pages
 
 A Cloudflare Pages-project based on Sveltekit and `@sveltejs/adapter-cloudflare`.
 
